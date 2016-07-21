@@ -11,10 +11,19 @@ import CoreData
 
 class DataStore {
     
-    var messages:[Message] = []
-    
+    var recipients: [Recipient] = []
     static let sharedDataStore = DataStore()
     
+    // MARK: Convenience
+    
+    func sendMessage(content: String, recipient: Recipient) {
+        let message = insertNewMessageObject()
+        message.content = content
+        message.createdAt = NSDate()
+        message.recipient = recipient
+        
+        saveContext()
+    }
     
     // MARK: - Core Data Saving support
     
@@ -23,8 +32,6 @@ class DataStore {
             do {
                 try managedObjectContext.save()
             } catch {
-                // Replace this implementation with code to handle the error appropriately.
-                // abort() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nserror = error as NSError
                 NSLog("Unresolved error \(nserror), \(nserror.userInfo)")
                 abort()
@@ -32,50 +39,53 @@ class DataStore {
         }
     }
     
-    func fetchData ()
-    {
+    func fetchData () {
+        let recipientsRequest = NSFetchRequest(entityName: "Recipient")
         
-        var error:NSError? = nil
-        
-        let messagesRequest = NSFetchRequest(entityName: "Message")
-        
-        let createdAtSorter = NSSortDescriptor(key: "createdAt", ascending:true)
-        
-        messagesRequest.sortDescriptors = [createdAtSorter]
-        
-        do{
-            messages = try managedObjectContext.executeFetchRequest(messagesRequest) as! [Message]
-        }catch let nserror1 as NSError{
-            error = nserror1
-            messages = []
+        do {
+            recipients = try managedObjectContext.executeFetchRequest(recipientsRequest) as! [Recipient]
+        } catch let error as NSError {
+            print("Error: \(error)")
+            
+            recipients = []
         }
         
-        if messages.count == 0 {
+        if (recipients.count == 0) {
             generateTestData()
         }
-        
-        ////         perform a fetch request to fill an array property on your datastore
     }
     
     func generateTestData() {
+        let recipient: Recipient = insertNewRecipientObject()
+        recipient.name = "Ryan Cohen"
+        recipient.email = "ryan.cohen@flatironschool.com"
+        recipient.phoneNumber = "(908) 839-3634"
+        recipient.twitterHandle = "@ryancohen"
         
-        let messageOne: Message = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: managedObjectContext) as! Message
+        let message: Message = insertNewMessageObject()
+        message.content = "Message 1"
+        message.createdAt = NSDate()
+        message.recipient = recipient
         
-        messageOne.content = "Message 1"
-        messageOne.createdAt = NSDate()
-        
-        let messageTwo: Message = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: managedObjectContext) as! Message
-        
-        messageTwo.content = "Message 2"
-        messageTwo.createdAt = NSDate()
-        
-        let messageThree: Message = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: managedObjectContext) as! Message
-        
-        messageThree.content = "Message 3"
-        messageThree.createdAt = NSDate()
+        let message1: Message = insertNewMessageObject()
+        message1.content = "Message 2"
+        message1.createdAt = NSDate()
+        message1.recipient = recipient
         
         saveContext()
         fetchData()
+    }
+    
+    func insertNewMessageObject() -> Message {
+        let message: Message = NSEntityDescription.insertNewObjectForEntityForName("Message", inManagedObjectContext: managedObjectContext) as! Message
+        
+        return message
+    }
+    
+    func insertNewRecipientObject() -> Recipient {
+        let recipient: Recipient = NSEntityDescription.insertNewObjectForEntityForName("Recipient", inManagedObjectContext: managedObjectContext) as! Recipient
+        
+        return recipient
     }
     
     // MARK: - Core Data stack
@@ -100,7 +110,7 @@ class DataStore {
         // The persistent store coordinator for the application. This implementation creates and returns a coordinator, having added the store for the application to it. This property is optional since there are legitimate error conditions that could cause the creation of the store to fail.
         // Create the coordinator and store
         let coordinator = NSPersistentStoreCoordinator(managedObjectModel: self.managedObjectModel)
-        let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent("SingleViewCoreData.sqlite")
+        let url = self.applicationDocumentsDirectory.URLByAppendingPathComponent("SlapChat.sqlite")
         var failureReason = "There was an error creating or loading the application's saved data."
         do {
             try coordinator.addPersistentStoreWithType(NSSQLiteStoreType, configuration: nil, URL: url, options: nil)

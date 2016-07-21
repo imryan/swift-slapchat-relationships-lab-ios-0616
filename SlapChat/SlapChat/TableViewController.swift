@@ -9,59 +9,90 @@
 import UIKit
 
 class TableViewController: UITableViewController {
-
     
-    var managedMessageObjects: [Message] = []
-    let store: DataStore = DataStore()
+    var messages: [Message] = []
+    var recipient: Recipient!
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    let store = DataStore.sharedDataStore
+    
+    // MARK: Functions
+    
+    @IBAction func add() {
+        let alertController = UIAlertController(title: "Slapchat", message: "Send a message to \(recipient.name!)", preferredStyle: .Alert)
+        var field: UITextField!
         
-        store.fetchData()
+        let send = UIAlertAction(title: "Send", style: .Default) { (action) in
+            self.store.sendMessage(field.text!, recipient: self.recipient)
+            self.reload()
+        }
         
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
+        let dismiss = UIAlertAction(title: "Dismiss", style: .Cancel) { (action) in
+            alertController.dismissViewControllerAnimated(true, completion: nil)
+        }
         
-        // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-        // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+        alertController.addTextFieldWithConfigurationHandler({ (textField: UITextField!) in
+            textField.placeholder = "Hello!"
+            textField.returnKeyType = .Done
+            
+            field = textField
+        })
         
+        alertController.addAction(send)
+        alertController.addAction(dismiss)
         
-        
+        self.presentViewController(alertController, animated: true, completion: nil)
     }
     
-    override func viewWillAppear(animated: Bool) {
-        
-        super.viewWillAppear(true)
-        
+    func reload() {
         store.fetchData()
+        
+        for message in recipient.messages! {
+            if (!messages.contains(message)) {
+                messages.append(message)
+            }
+        }
+        
         tableView.reloadData()
-        
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
-    }
-    
-    // MARK: - Table view data source
+    // MARK: - Table
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of rows
-        return store.messages.count
+        return messages.count
     }
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCellWithIdentifier("CellId", forIndexPath: indexPath)
         
-        let cell = tableView.dequeueReusableCellWithIdentifier("basicCell", forIndexPath: indexPath)
+        let message = messages[indexPath.row]
         
-        let eachMessage = store.messages[indexPath.row]
+        cell.textLabel?.text = message.content
         
-        cell.textLabel?.text = eachMessage.content
+        if let createdAt = message.createdAt {
+            cell.detailTextLabel?.text = "\(createdAt)"
+        }
         
         return cell
+    }
+    
+    // MARK: View
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(true)
+        
+        reload()
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+    
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
     }
 }
