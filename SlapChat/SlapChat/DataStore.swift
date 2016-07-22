@@ -14,7 +14,7 @@ class DataStore {
     var recipients: [Recipient] = []
     static let sharedDataStore = DataStore()
     
-    // MARK: Convenience
+    // MARK: - Functions
     
     func sendMessage(content: String, recipient: Recipient) {
         let message = insertNewMessageObject()
@@ -23,6 +23,41 @@ class DataStore {
         message.recipient = recipient
         
         saveContext()
+    }
+    
+    func addPerson(name: String) {
+        let person = insertNewRecipientObject()
+        person.name = name
+        
+        saveContext()
+    }
+    
+    func fetchPeopleMatching(name: String) -> [Recipient] {
+        var people: [Recipient] = []
+        
+        for recipient in recipients {
+            if (recipient.name?.rangeOfString(name) != nil) {
+                people.append(recipient)
+            }
+        }
+        
+        return people
+    }
+    
+    func fetchMessagesMatching(content: String) -> [Message] {
+        var messages: [Message] = []
+        
+        for recipient in recipients {
+            if let recipientMessages = recipient.messages {
+                for message in recipientMessages {
+                    if (message.content?.rangeOfString(content) != nil) {
+                        messages.append(message)
+                    }
+                }
+            }
+        }
+        
+        return messages
     }
     
     // MARK: - Core Data Saving support
@@ -131,7 +166,7 @@ class DataStore {
         return coordinator
     }()
     
-    //MARK: Application's Documents directory
+    //MARK: - Application's Documents directory
     // Returns the URL to the application's Documents directory.
     
     lazy var applicationDocumentsDirectory: NSURL = {

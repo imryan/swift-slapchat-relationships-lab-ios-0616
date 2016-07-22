@@ -14,6 +14,7 @@
 		1B8593111D3D2D660051D343 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 1B85930F1D3D2D660051D343 /* LaunchScreen.storyboard */; };
 		1B8593191D3D2DC70051D343 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B8593181D3D2DC70051D343 /* DataStore.swift */; };
 		1B85931F1D3D2EAD0051D343 /* TableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B85931E1D3D2EAD0051D343 /* TableViewController.swift */; };
+		9464B6191D425B0E00CF5A28 /* SearchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9464B6181D425B0E00CF5A28 /* SearchViewController.swift */; };
 		94AC03571D414527001A650C /* RecipientsTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94AC03561D414527001A650C /* RecipientsTableViewController.swift */; };
 		94AC03651D41676A001A650C /* Recipient+CoreDataProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94AC03611D41676A001A650C /* Recipient+CoreDataProperties.swift */; };
 		94AC03661D41676A001A650C /* Recipient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94AC03621D41676A001A650C /* Recipient.swift */; };
@@ -31,6 +32,7 @@
 		1B8593121D3D2D660051D343 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1B8593181D3D2DC70051D343 /* DataStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
 		1B85931E1D3D2EAD0051D343 /* TableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TableViewController.swift; sourceTree = "<group>"; };
+		9464B6181D425B0E00CF5A28 /* SearchViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SearchViewController.swift; sourceTree = "<group>"; };
 		94AC03561D414527001A650C /* RecipientsTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RecipientsTableViewController.swift; sourceTree = "<group>"; };
 		94AC03611D41676A001A650C /* Recipient+CoreDataProperties.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "Recipient+CoreDataProperties.swift"; path = "../Recipient+CoreDataProperties.swift"; sourceTree = "<group>"; };
 		94AC03621D41676A001A650C /* Recipient.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Recipient.swift; path = ../Recipient.swift; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 				1B8593181D3D2DC70051D343 /* DataStore.swift */,
 				1B85931E1D3D2EAD0051D343 /* TableViewController.swift */,
 				94AC03561D414527001A650C /* RecipientsTableViewController.swift */,
+				9464B6181D425B0E00CF5A28 /* SearchViewController.swift */,
 				1B8593071D3D2D660051D343 /* Main.storyboard */,
 				1B85930D1D3D2D660051D343 /* Assets.xcassets */,
 				1B85930F1D3D2D660051D343 /* LaunchScreen.storyboard */,
@@ -164,6 +167,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9464B6191D425B0E00CF5A28 /* SearchViewController.swift in Sources */,
 				1B85930C1D3D2D660051D343 /* SlapChat.xcdatamodeld in Sources */,
 				1B85931F1D3D2EAD0051D343 /* TableViewController.swift in Sources */,
 				1B8593191D3D2DC70051D343 /* DataStore.swift in Sources */,

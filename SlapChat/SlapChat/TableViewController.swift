@@ -14,8 +14,9 @@ class TableViewController: UITableViewController {
     var recipient: Recipient!
     
     let store = DataStore.sharedDataStore
+    let dateFormatter = NSDateFormatter()
     
-    // MARK: Functions
+    // MARK: - Functions
     
     @IBAction func add() {
         let alertController = UIAlertController(title: "Slapchat", message: "Send a message to \(recipient.name!)", preferredStyle: .Alert)
@@ -52,10 +53,17 @@ class TableViewController: UITableViewController {
             }
         }
         
-        tableView.reloadData()
+        let sort = NSSortDescriptor(key: "createdAt", ascending: false)
+        messages = (messages as NSArray).sortedArrayUsingDescriptors([sort]) as! [Message]
+        
+        tableView.reloadSections(NSIndexSet.init(indexesInRange: NSMakeRange(0, 1)), withRowAnimation: .Automatic)
     }
     
     // MARK: - Table
+    
+    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return "Messages"
+    }
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
@@ -73,22 +81,29 @@ class TableViewController: UITableViewController {
         cell.textLabel?.text = message.content
         
         if let createdAt = message.createdAt {
-            cell.detailTextLabel?.text = "\(createdAt)"
+            cell.detailTextLabel?.text = "\(dateFormatter.stringFromDate(createdAt))"
         }
         
         return cell
     }
     
-    // MARK: View
+    // MARK: - View
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(true)
         
+        dateFormatter.dateFormat = "h:mm a"
         reload()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        if let name = recipient.name {
+            self.title = "\(name)"
+        } else {
+            self.title = "Messages"
+        }
     }
     
     override func didReceiveMemoryWarning() {

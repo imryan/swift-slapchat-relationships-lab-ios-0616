@@ -11,9 +11,48 @@ import UIKit
 class RecipientsTableViewController: UITableViewController {
 
     var recipients: [Recipient] = []
-    let dataStore = DataStore.sharedDataStore
+    let store = DataStore.sharedDataStore
+    
+    // MARK: - Functions
+    
+    @IBAction func addPerson() {
+        let alertController = UIAlertController(title: "Slapchat", message: "Add a new contact", preferredStyle: .Alert)
+        var field: UITextField!
+        
+        let send = UIAlertAction(title: "Add", style: .Default) { (action) in
+            self.store.addPerson(field.text!)
+            self.reload()
+        }
+        
+        let dismiss = UIAlertAction(title: "Dismiss", style: .Cancel) { (action) in
+            alertController.dismissViewControllerAnimated(true, completion: nil)
+        }
+        
+        alertController.addTextFieldWithConfigurationHandler({ (textField: UITextField!) in
+            textField.placeholder = "John Doe"
+            textField.returnKeyType = .Done
+            
+            field = textField
+        })
+        
+        alertController.addAction(send)
+        alertController.addAction(dismiss)
+        
+        self.presentViewController(alertController, animated: true, completion: nil)
+    }
+    
+    func reload() {
+        store.fetchData()
+        recipients = store.recipients
+        
+        tableView.reloadSections(NSIndexSet.init(indexesInRange: NSMakeRange(0, 1)), withRowAnimation: .Automatic)
+    }
     
     // MARK: - Table
+    
+    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return "People"
+    }
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
@@ -31,19 +70,17 @@ class RecipientsTableViewController: UITableViewController {
         cell.textLabel?.text = recipient.name
 
         if let count = recipient.messages?.count {
-            cell.detailTextLabel?.text = "\(count) messages"
-        } else {
-            cell.detailTextLabel?.text = "No messages"
+            cell.detailTextLabel?.text = (count == 1) ? "\(count) message" : "\(count) messages"
         }
         
         return cell
     }
     
-    // MARK: View
+    // MARK: - View
     
     override func viewWillAppear(animated: Bool) {
-        dataStore.fetchData()
-        recipients = dataStore.recipients
+        store.fetchData()
+        recipients = store.recipients
         
         tableView.reloadData()
     }
@@ -57,10 +94,12 @@ class RecipientsTableViewController: UITableViewController {
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        let messagesViewController = segue.destinationViewController as! TableViewController
-        
-        if let index = tableView.indexPathForSelectedRow?.row {
-            messagesViewController.recipient = recipients[index]
+        if (segue.identifier == "ToMessages") {
+            let messagesViewController = segue.destinationViewController as! TableViewController
+            
+            if let index = tableView.indexPathForSelectedRow?.row {
+                messagesViewController.recipient = recipients[index]
+            }
         }
     }
 }
